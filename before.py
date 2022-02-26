@@ -101,7 +101,8 @@ class Game(object):
             print("Player {}: Guess row: ".format(self.current_player), end="")
             self.guess_row = self.user_input()
 
-            print("Player {}: Guess column: ".format(self.current_player), end="")
+            print("Player {}: Guess column: ".format(
+                self.current_player), end="")
             self.guess_col = self.user_input()
 
             if self.board[self.guess_row][self.guess_col] == "X":
@@ -148,14 +149,14 @@ class Game(object):
     """
 
     def main(self):
-        os.system("clear")
         self.print_board(self.board)
         self.board[self.ship_row][self.ship_col] = "S"
         if self.game_logic() == True:
             self.board[self.ship_row][self.ship_col] = "S"
             self.print_board(self.board)
             print(
-                "Congratulations! Player {} sank the ship!".format(self.current_player)
+                "Congratulations! Player {} sank the ship!".format(
+                    self.current_player)
             )
         else:
             print("Game over! Player {} has lost!".format(self.current_player))
@@ -168,18 +169,26 @@ Doing it this way avoids using confusing while loops entirely.
 """
 
 
+ASK_FOR_NUMBERS_OF_PLAYERS = "Please enter how many players are going to play: "
+
+
+CAN_NOT_NEGATIVE_VALUE = "You can't have a negative amount of players. Try again.\n\n"
+
+
+EMPTY_AMOUNT = "You didn't type any player amount! Try again.\n\n"
+
+
 def battleship_run():
-    os.system("clear")
-    print("Please enter how many players are going to play:")
-    players = input("\n")
+    print(ASK_FOR_NUMBERS_OF_PLAYERS, end="")
+    players = input("")
     if len(players) > 0:
         if int(players) < 0:
-            print("You can't have a negative amount of players. Try again.")
+            print(CAN_NOT_NEGATIVE_VALUE, end="")
             return battleship_run()
         else:
             return int(players)
     else:
-        print("You didn't type any player amount! Try again.")
+        print(EMPTY_AMOUNT, end="")
         return battleship_run()
 
 
@@ -189,5 +198,6 @@ Pretty easy to read if you ask me.
 """
 
 if __name__ == "__main__":
+    os.system("clear")
     battleship = Game(battleship_run())
     battleship.main()
