@@ -20,6 +20,14 @@ def game():
     return Game(2)
 
 
+def test_game_init_ships():
+    game = Game(2)
+    assert game.current_player == 1
+    assert game.player_list == [5, 5]
+    assert game.guess_col == 0
+    assert game.guess_row == 0
+
+
 def test_battleship_run(mock_input, assert_print_output):
 
     inputs = ['1', '2', '', '2']
