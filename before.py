@@ -14,6 +14,11 @@ understand the code further in the project
 EMPTY_SPACE = 'O'
 
 
+NOT_EVEN_IN_THE_OCEAN = "That's not even in the ocean! Try again."
+
+YOU_DID_NOT_TYPE = "You didn't type anything! Try again"
+
+
 class Game(object):
     def __init__(self, players):
         self.guesses = 5
@@ -70,13 +75,13 @@ class Game(object):
     def user_input(self):
         line = input("\n")
         if len(line) != 0:
-            if int(line) > len(self.board):
-                print("That's not even in the ocean! Try again.", end="")
+            if int(line) > len(self.board) or int(line) < 1:
+                print(NOT_EVEN_IN_THE_OCEAN, end="")
                 return self.user_input()
             else:
-                return int(line) - 1
+                return int(line)
         else:
-            print("You didn't type anything! Try again", end="")
+            print(YOU_DID_NOT_TYPE, end="")
             return self.user_input()
 
     """
@@ -92,16 +97,15 @@ class Game(object):
         else:
             print(
                 "Player {} has {} guesses left.".format(
-                    self.current_player, self.player_list[self.current_player - 1]
-                )
+                    self.current_player, self.player_list[self.current_player - 1])
             )
 
             print("Player {}: Guess row: ".format(self.current_player), end="")
-            self.guess_row = self.user_input()
+            self.guess_row = self.user_input() - 1
 
             print("Player {}: Guess column: ".format(
                 self.current_player), end="")
-            self.guess_col = self.user_input()
+            self.guess_col = self.user_input() - 1
 
             if self.board[self.guess_row][self.guess_col] == "X":
                 print("You've already guessed on that row! Try again.")
