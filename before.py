@@ -74,15 +74,16 @@ class Game(object):
 
     def user_input(self):
         line = input("\n")
-        if len(line) != 0:
-            if int(line) > len(self.board) or int(line) < 1:
-                print(NOT_EVEN_IN_THE_OCEAN, end="")
-                return self.user_input()
-            else:
-                return int(line)
-        else:
+        if len(line) == 0:
             print(YOU_DID_NOT_TYPE, end="")
             return self.user_input()
+
+        is_in_the_ocean = 0 < int(line) <= len(self.board)
+        if not is_in_the_ocean:
+            print(NOT_EVEN_IN_THE_OCEAN, end="")
+            return self.user_input()
+
+        return int(line)
 
     """
     I wanted to avoid retyping code as much as possible
