@@ -11,6 +11,9 @@ understand the code further in the project
 """
 
 
+EMPTY_SPACE = 'O'
+
+
 class Game(object):
     def __init__(self, players):
         self.guesses = 5
@@ -32,12 +35,7 @@ class Game(object):
     """
 
     def create_matrix(self, max_x, max_y):
-        matrix = list(range(max_x))
-        for x in matrix:
-            matrix[x] = list(range(max_y))
-            for y in range(max_y):
-                matrix[x][y] = "O"
-        return c.deepcopy(matrix)
+        return [[EMPTY_SPACE for _ in range(max_y)] for _ in range(max_x)]
 
     """
     Defining the print_board function, here I respresent

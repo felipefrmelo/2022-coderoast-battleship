@@ -1,4 +1,4 @@
-from before import ASK_FOR_NUMBERS_OF_PLAYERS, EMPTY_AMOUNT, battleship_run, Game
+from before import ASK_FOR_NUMBERS_OF_PLAYERS, EMPTY_AMOUNT, EMPTY_SPACE, battleship_run, Game
 import pytest
 
 
@@ -33,3 +33,18 @@ def test_battleship_run(mock_input, assert_print_output):
     assert_print_output(ASK_FOR_NUMBERS_OF_PLAYERS +
                         EMPTY_AMOUNT + ASK_FOR_NUMBERS_OF_PLAYERS)
     assert players == 2
+
+
+def test_game_create_table():
+    game = Game(2)
+    assert game.create_matrix(2, 2) == [[EMPTY_SPACE, EMPTY_SPACE],
+                                        [EMPTY_SPACE, EMPTY_SPACE]]
+
+    assert game.create_matrix(1, 2) == [[EMPTY_SPACE, EMPTY_SPACE]]
+
+    assert game.create_matrix(2, 1) == [[EMPTY_SPACE],
+                                        [EMPTY_SPACE]]
+
+    assert game.create_matrix(3, 3) == [[EMPTY_SPACE] * 3] * 3
+
+    assert game.create_matrix(5, 5) == [[EMPTY_SPACE] * 5] * 5
