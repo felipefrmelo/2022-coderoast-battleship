@@ -20,7 +20,7 @@ YOU_DID_NOT_TYPE = "You didn't type anything! Try again"
 
 
 class Game(object):
-    def __init__(self, players):
+    def __init__(self, players, ship_row=rand.randint(0, 4), ship_col=rand.randint(0, 4)):
         self.guesses = 5
         self.player_list = []
         for player in range(players):
@@ -28,11 +28,12 @@ class Game(object):
         self.current_player = 1
         self.board = self.create_matrix(5, 5)
         self.board_visible = c.deepcopy(self.board)
-        self.ship_row = rand.randint(0, 4)
-        self.ship_col = rand.randint(0, 4)
+        self.ship_row = ship_row
+        self.ship_col = ship_col
         self.guess_row = 0
         self.guess_col = 0
 
+        self.board[self.ship_row][self.ship_col] = "S"
     """
     Defining the many methods that makes the game work,
     starting with the create_matrix where we take in the 
@@ -65,6 +66,13 @@ class Game(object):
             x += 1
         return None
 
+    def board_to_str(self, board_in) -> str:
+        b_str = ""
+        for row in self.board:
+            b_str += " ".join(row)
+            b_str += "\n"
+        return b_str
+
     """
     To avoid repeating the same code twice, I made the user_input method more generalized
     and made a seperate method to take care of if its row or column thats being inputed.
@@ -73,7 +81,7 @@ class Game(object):
     """
 
     def user_input(self):
-        line = input("\n")
+        line = input("")
         if len(line) == 0:
             print(YOU_DID_NOT_TYPE, end="")
             return self.user_input()
@@ -127,24 +135,23 @@ class Game(object):
             self.board[self.guess_row][self.guess_col]
             == self.board[self.ship_row][self.ship_col]
         ):
-            # if self.guess_row == self.ship_row and self.guess_col == self.ship_col:
             return True
-        else:
-            if self.player_list[self.current_player - 1] > 0:
-                print("Sorry, you missed!")
-                self.board[self.guess_row][self.guess_col] = "X"
-                self.board_visible[self.guess_row][self.guess_col] = "X"
-                self.player_list[self.current_player - 1] -= 1
-                self.print_board(self.board_visible)
 
-                if len(self.player_list) > 1:
-                    self.current_player += 1
-                if self.current_player > len(self.player_list):
-                    self.current_player = 1
-                return self.game_logic()
-            else:
-                print("Player {} ran out of guesses!".format(self.current_player))
-                return False
+        if self.player_list[self.current_player - 1] > 0:
+            print("Sorry, you missed!")
+            self.board[self.guess_row][self.guess_col] = "X"
+            self.board_visible[self.guess_row][self.guess_col] = "X"
+            self.player_list[self.current_player - 1] -= 1
+            self.print_board(self.board_visible)
+
+            if len(self.player_list) > 1:
+                self.current_player += 1
+            if self.current_player > len(self.player_list):
+                self.current_player = 1
+            return self.game_logic()
+
+        print("Player {} ran out of guesses!".format(self.current_player))
+        return False
 
     """
     Keeping the main function simple and easy to read by handling game logic
@@ -152,7 +159,7 @@ class Game(object):
     """
 
     def main(self):
-        self.print_board(self.board)
+        self.print_board(self.board_visible)
         self.board[self.ship_row][self.ship_col] = "S"
         if self.game_logic() == True:
             self.board[self.ship_row][self.ship_col] = "S"
