@@ -27,13 +27,11 @@ class Game(object):
             self.player_list.append(self.guesses)
         self.current_player = 1
         self.board = self.create_matrix(5, 5)
-        self.board_visible = c.deepcopy(self.board)
         self.ship_row = ship_row
         self.ship_col = ship_col
         self.guess_row = 0
         self.guess_col = 0
 
-        self.board[self.ship_row][self.ship_col] = "S"
     """
     Defining the many methods that makes the game work,
     starting with the create_matrix where we take in the 
@@ -48,6 +46,20 @@ class Game(object):
     x as rows
     y as colums
     """
+
+    def init(self):
+        return self.makeState()
+
+    def makeState(self, winner=None):
+        return {
+            "board": self.board,
+            'current_player': {
+                'name': self.current_player,
+                'guesses_left': self.player_list[self.current_player - 1]
+            },
+            'winner': winner,
+            'draw': sum(self.player_list) == 0
+        }
 
     def print_board(self, board_in):
         x = 0
@@ -127,31 +139,29 @@ class Game(object):
     This is also an exercise to practice writing recursive code instead of using while loops.
     """
 
+    @property
+    def isWinner(self):
+        return self.guess_row == self.ship_row and self.guess_col == self.ship_col
+
     def game_logic(self):
         self.player_guesses()
 
         # I first did -1 here and spread out in the code. Very bad and confusing.
-        if (
-            self.board[self.guess_row][self.guess_col]
-            == self.board[self.ship_row][self.ship_col]
-        ):
-            return True
 
-        if self.player_list[self.current_player - 1] > 0:
-            print("Sorry, you missed!")
-            self.board[self.guess_row][self.guess_col] = "X"
-            self.board_visible[self.guess_row][self.guess_col] = "X"
-            self.player_list[self.current_player - 1] -= 1
-            self.print_board(self.board_visible)
+        if (self.isWinner):
+            self.board[self.guess_row][self.guess_col] = "S"
+            return self.makeState(winner=self.current_player)
 
-            if len(self.player_list) > 1:
-                self.current_player += 1
-            if self.current_player > len(self.player_list):
-                self.current_player = 1
-            return self.game_logic()
+        print("Sorry, you missed!")
+        self.board[self.guess_row][self.guess_col] = "X"
+        self.player_list[self.current_player - 1] -= 1
 
-        print("Player {} ran out of guesses!".format(self.current_player))
-        return False
+        if len(self.player_list) > 1:
+            self.current_player += 1
+        if self.current_player > len(self.player_list):
+            self.current_player = 1
+
+        return self.makeState()
 
     """
     Keeping the main function simple and easy to read by handling game logic
@@ -159,18 +169,22 @@ class Game(object):
     """
 
     def main(self):
-        self.print_board(self.board_visible)
-        self.board[self.ship_row][self.ship_col] = "S"
-        if self.game_logic() == True:
-            self.board[self.ship_row][self.ship_col] = "S"
-            self.print_board(self.board)
-            print(
-                "Congratulations! Player {} sank the ship!".format(
-                    self.current_player)
-            )
-        else:
-            print("Game over! Player {} has lost!".format(self.current_player))
-            self.print_board(self.board)
+
+        state = self.init()
+        self.print_board(state['board'])
+        while True:
+
+            state = self.game_logic()
+
+            self.print_board(state['board'])
+            if state['draw']:
+                print("It's a draw!")
+                break
+            elif state['winner']:
+                print("Player {} wins!".format(state['winner']))
+                break
+            else:
+                continue
 
 
 """
